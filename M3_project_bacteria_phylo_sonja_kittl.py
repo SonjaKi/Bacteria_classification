@@ -27,14 +27,11 @@
 #     ((33175[BioProject] OR 33317[BioProject])) AND txid85009[Organism]
 # 
 
-# In[1]:
 
 
-#from IPython.display import Image
-#Image(filename = "M3_project_data/trees/tree.png", width = 1200, height = 600)
 
 
-# To replace the unique identifiers with uniform labels the following bash commands were used
+#To replace the unique identifiers with uniform labels the following bash commands were used
 # 
 # - sed "/>/c>actinomycetales" txid2037.fasta > actinomycetales_taxid_la.fasta
 # - sed "/>/c>corynebacteriales" txid85007.fasta > corynebacteriales_taxid_la.fasta
@@ -44,14 +41,14 @@
 # merge into one dataset 
 # - cat *la.fasta > actinobacteria_data4.fasta
 
-# In[2]:
 
+#import necessary libraries
 
 import sys
 
 import numpy as np
 import matplotlib.pyplot as plt
-import IPython.display as ipyd
+#import IPython.display as ipyd
 import tensorflow as tf
 import re
 
@@ -65,7 +62,6 @@ import re
 #} </style>""")
 
 
-# In[3]:
 
 
 #funcion to modify the input data, takes a string of DNA and returns one hot encoded version thereof
@@ -97,7 +93,7 @@ def one_hot_dna(myDNA):
         
 
 
-# In[4]:
+
 
 
 #funcion to reverse the encoding of the DNA sequence
@@ -127,11 +123,12 @@ def decode_dna(my_one_hot_DNA):
     return myDNA_string
 
 
-# In[5]:
+
 
 
 #to reshape sequences from x data to be used for decoding
 def reshape_sequence(sequence):
+    """Helper function to reshape x data so it can be used for the function decode_dna"""
     new_sequence=[]
     for base in sequence:
         #print(list(base.T[0]))
@@ -141,7 +138,7 @@ def reshape_sequence(sequence):
         
 
 
-# In[6]:
+
 
 #to test the functions to encode and decode DNA
 #myDNA='aacgttcnta'
@@ -151,7 +148,7 @@ def reshape_sequence(sequence):
 #print(decoded_DNA)
 
 
-# In[7]:
+
 
 
 #function to transform labels to integers
@@ -183,9 +180,6 @@ def int_label(mylabels):
     #print(labels_int)
     return labels_int, labels_dict
     
-
-
-# In[8]:
 
 
 #function to read the input file
@@ -261,30 +255,21 @@ def read_input(myfile):
     return sequences_one_hot, labels_integer, labels_dict
 
 
-# In[9]:
-
-
 #read the data
-mydata=input("Enter the path to your data")
+mydata=input("Enter the path to your data\n")
 x_data, y_data, labels_dict=read_input(mydata)
-#x_data, y_data, labels_dict=read_input("actinobacteria_data/acti_data3.fasta")
+
+print("These are the labels used:")
 print(labels_dict)
 
 
-# In[10]:
 
-
-print(np.array(x_data).shape)
-
-
-# In[11]:
+#print(np.array(x_data).shape)
 
 
 number_of_labels=max(y_data)+1
-print(number_of_labels)
+#print(number_of_labels)
 
-
-# In[12]:
 
 
 #split the data into groups according to their labels, one group for each label
@@ -305,26 +290,17 @@ for i in range(0,len(y_data)):
 #print(sequences)
 
 
-# In[13]:
-
-
 group_sizes={}
 for label in range(0,number_of_labels):
     group_sizes[label]=len(labels[label])
 
 
-# In[14]:
-
-
 #find the index with the most and least samples
+print("These are the group sizes:")
 print(group_sizes)
 smallest_group=min(group_sizes, key=group_sizes.get)
 largest_group=max(group_sizes, key=group_sizes.get)
-print(smallest_group, largest_group)
-
-
-# In[15]:
-
+#print(smallest_group, largest_group)
 
 #augment data to the size of half the largest group by randomly replacing 2 bases with n
 data_size=int(group_sizes[largest_group]/2)
@@ -348,14 +324,7 @@ for label in range(0,number_of_labels):
             labels[label]+=[label]
     
 
-            
-
-
-# In[16]:
-
-
-
-        
+                    
 #randomly permutate the data in each group
 group_sizes={}
 for label in range(0,number_of_labels):
@@ -367,19 +336,12 @@ for label in range(0,number_of_labels):
     print(label, ': sequences shape', sequences[label].shape, 'label shape', labels[label].shape)
 
 
-# In[17]:
-
 
 #find the index with the least samples
-print(group_sizes)
-smallest_group=min(group_sizes, key=group_sizes.get)
-largest_group=max(group_sizes, key=group_sizes.get)
-print(smallest_group, largest_group)
-
-
-# In[18]:
-
-
+#print(group_sizes)
+#smallest_group=min(group_sizes, key=group_sizes.get)
+#largest_group=max(group_sizes, key=group_sizes.get)
+#print(smallest_group, largest_group)
 
 
 #We will take 70% from each for training and 20% for validation and 10% for prediction
@@ -407,30 +369,20 @@ for group in range(1,number_of_labels):
     y_predict = np.concatenate([y_predict, labels[group][n_valid_group:group_sizes[smallest_group]]])  
 
 
-# In[19]:
 
-
+print("Shape of training data (X,Y):")
 print('x_train shape', x_train.shape, 'y_train shape', y_train.shape)
+print("Shape of validation data (X,Y):")
 print('x_valid shape', x_valid.shape, 'y_valid shape', y_valid.shape)
+print("Shape of prediction data (X,Y):")
 print('x_predict shape', x_predict.shape, 'y_predict shape', y_predict.shape)
 
-
-# In[20]:
-
-
 #print(y_valid)
-
-
-# In[21]:
-
 
 #randomly permutate validation data
 idx = np.random.permutation(len(y_valid))
 y_valid = y_valid[idx]
 x_valid = x_valid[idx]
-
-
-# In[22]:
 
 
 #randomly permutate training data
@@ -439,22 +391,11 @@ y_train = y_train[idx]
 x_train = x_train[idx]
 
 
-# In[23]:
-
 
 #randomly permutate the prediction data
 idx = np.random.permutation(len(y_predict))
 y_predict = y_predict[idx]
 x_predict = x_predict[idx]
-
-
-# In[ ]:
-
-
-
-
-
-# In[24]:
 
 
 #to expand the dimensions
@@ -463,14 +404,10 @@ x_valid = np.expand_dims(x_valid, -1)
 x_predict = np.expand_dims(x_predict, -1)
 
 
-# In[25]:
-
 
 input_shape=x_train.shape[1:]
-print(input_shape)
+#print(input_shape)
 
-
-# In[26]:
 
 
 #taken from https://keras.io/examples/vision/mnist_convnet/ modified
@@ -495,25 +432,18 @@ model.compile(optimizer=tf.optimizers.Adam(learning_rate=0.003) ,
     metrics=['accuracy'])
 
 
-# In[27]:
 
-
-model.summary()
-
-
-# In[28]:
+print(model.summary())
 
 
 save_path = 'save/model_{epoch}.ckpt'
 save_callback = tf.keras.callbacks.ModelCheckpoint(filepath=save_path, save_weights_only=True)
 
+print("Starting to train")
 hist = model.fit(x=x_train, y=y_train,
-                 epochs=15, batch_size=5, 
+                 epochs=7, batch_size=5, 
                  validation_data=(x_valid, y_valid),
                  callbacks=[save_callback])
-
-
-# In[29]:
 
 
 fig, axs = plt.subplots(1, 2, figsize=(10,5))
@@ -526,8 +456,6 @@ axs[1].plot(hist.epoch, hist.history['val_accuracy'])
 axs[1].legend(('training accuracy', 'validation accuracy'), loc='lower right')
 plt.show()
 
-
-# In[30]:
 
 
 #get the prediction data in DNA form to use for alignment
@@ -543,9 +471,6 @@ with open('predict_data.fasta', 'w') as file:
         my_encoded=reshape_sequence(x_predict[i])
         my_sequence=decode_dna(my_encoded)
         file.write(str(my_sequence)+'\n')
-
-
-# In[31]:
 
 
 
@@ -574,10 +499,6 @@ with np.printoptions(precision=3, suppress=True):
     #print(predictions_true, predictions_false)
     for label in range(0,number_of_labels):
         print(inv_labels_dict[label],':','%sensitivity=',               round(100*predictions_true[label]/(predictions_true[label]+predictions_false[label])),                  '%PPV=', round(100*predictions_true_rv[label]/(predictions_true_rv[label]+predictions_false_rv[label])),               )
-
-
-# In[ ]:
-
 
 
 
