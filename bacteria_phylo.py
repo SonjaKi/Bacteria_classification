@@ -53,7 +53,7 @@ import tensorflow as tf
 import re
 
 
-
+#necessary if run in jupyter notebook"
 #from IPython.core.display import HTML
 #HTML("""<style> .rendered_html code { 
 #    padding: 2px 5px;
@@ -136,19 +136,6 @@ def reshape_sequence(sequence):
     return new_sequence
         
         
-
-
-
-
-#to test the functions to encode and decode DNA
-#myDNA='aacgttcnta'
-#encoded_DNA=one_hot_dna(myDNA)
-#decoded_DNA=decode_dna(encoded_DNA)
-#print(encoded_DNA)
-#print(decoded_DNA)
-
-
-
 
 
 #function to transform labels to integers
@@ -256,7 +243,8 @@ def read_input(myfile):
 
 
 #read the data
-mydata=input("Enter the path to your data\n")
+#mydata=input("Enter the path to your data\n")
+mydata=sys.argv[1]
 x_data, y_data, labels_dict=read_input(mydata)
 
 print("These are the labels used:")
@@ -307,7 +295,7 @@ data_size=int(group_sizes[largest_group]/2)
 for label in range(0,number_of_labels):
     if group_sizes[label]<data_size:
         to_impute=data_size-group_sizes[label]
-        print(label, to_impute)
+#        print(label, to_impute)
         for i in range(0,to_impute):
             mypool=np.copy(sequences[label])
             replace=np.random.randint(0,1500)
@@ -439,9 +427,11 @@ print(model.summary())
 save_path = 'save/model_{epoch}.ckpt'
 save_callback = tf.keras.callbacks.ModelCheckpoint(filepath=save_path, save_weights_only=True)
 
+myepochs=int(sys.argv[2])
+
 print("Starting to train")
 hist = model.fit(x=x_train, y=y_train,
-                 epochs=7, batch_size=5, 
+                 epochs=myepochs, batch_size=5, 
                  validation_data=(x_valid, y_valid),
                  callbacks=[save_callback])
 
@@ -459,10 +449,10 @@ plt.show()
 
 
 #get the prediction data in DNA form to use for alignment
-print(labels_dict)
+#print(labels_dict)
 #invert the dictionalry
 inv_labels_dict = dict(zip(labels_dict.values(), labels_dict.keys()))
-print(inv_labels_dict)
+#print(inv_labels_dict)
 with open('predict_data.fasta', 'w') as file:
     for i in range(len(y_predict)):
         label=y_predict[i]
