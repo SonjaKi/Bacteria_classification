@@ -465,30 +465,31 @@ with open('predict_data.fasta', 'w') as file:
 
 
 # Making predictions.
-print(labels_dict)
-predictions = model.predict(x_predict)
-predictions_true=np.zeros(number_of_labels)
-predictions_false=np.zeros(number_of_labels)
+with open('predict_results.txt', 'w') as outfile:
+    outfile.write(str(labels_dict))
+    predictions = model.predict(x_predict)
+    predictions_true=np.zeros(number_of_labels)
+    predictions_false=np.zeros(number_of_labels)
 
-predictions_true_rv=np.zeros(number_of_labels)
-predictions_false_rv=np.zeros(number_of_labels)
-with np.printoptions(precision=3, suppress=True):
-    for i in range(len(y_predict)):
-        predicted_label=list(predictions[i]).index(max(predictions[i]))
-        true_label=y_predict[i]
-        if predicted_label==true_label:
-            predictions_true[true_label]+=1
-            predictions_true_rv[predicted_label]+=1
-        else:
-            predictions_false[true_label]+=1
-            predictions_false_rv[predicted_label]+=1
+    predictions_true_rv=np.zeros(number_of_labels)
+    predictions_false_rv=np.zeros(number_of_labels)
+    with np.printoptions(precision=3, suppress=True):
+        for i in range(len(y_predict)):
+            predicted_label=list(predictions[i]).index(max(predictions[i]))
+            true_label=y_predict[i]
+            if predicted_label==true_label:
+                predictions_true[true_label]+=1
+                predictions_true_rv[predicted_label]+=1
+            else:
+                predictions_false[true_label]+=1
+                predictions_false_rv[predicted_label]+=1
 
-            
-        
-        print(i,'Prediction is ', y_predict[i]==predicted_label, ': true label: ', y_predict[i], 'predicted label:', predicted_label, 'predictions: ', predictions[i])
-    #print(predictions_true, predictions_false)
-    for label in range(0,number_of_labels):
-        print(inv_labels_dict[label],':','%sensitivity=',               round(100*predictions_true[label]/(predictions_true[label]+predictions_false[label])),                  '%PPV=', round(100*predictions_true_rv[label]/(predictions_true_rv[label]+predictions_false_rv[label])),               )
+
+
+            print(i,'Prediction is ', y_predict[i]==predicted_label, ': true label: ', y_predict[i], 'predicted label:', predicted_label, 'predictions: ', predictions[i], file=outfile)
+        #print(predictions_true, predictions_false)
+        for label in range(0,number_of_labels):
+            print(inv_labels_dict[label],':','%sensitivity=',               round(100*predictions_true[label]/(predictions_true[label]+predictions_false[label])),                  '%PPV=', round(100*predictions_true_rv[label]/(predictions_true_rv[label]+predictions_false_rv[label])),               file=outfile)
 
 
 
