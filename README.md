@@ -60,6 +60,6 @@ Figure 1: plotting training and validation loss and accurracy
  
 predict_results.txt: contains the predictions for the testing data (10% of input)
 
-predict_data.fasta: The data used for prediction retransformed to fasta format with integer and text label.
+predict_data.fasta: The data used for prediction retransformed to fasta format with integer correponding to draw (same as in predict_results.txt) and text label.
 
 

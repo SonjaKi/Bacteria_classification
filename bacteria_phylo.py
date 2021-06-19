@@ -216,6 +216,7 @@ def read_input(myfile):
     #    if len(sequence)>1500:
     #        print(''.join(sequence))
     max_length=max(my_lenghts)
+    print('Max sequence length:')
     print(max_length)
     #max_length=1600 #to test 
     i=0
@@ -298,11 +299,11 @@ for label in range(0,number_of_labels):
 #        print(label, to_impute)
         for i in range(0,to_impute):
             mypool=np.copy(sequences[label])
-            replace=np.random.randint(0,1500)
-            replace2=np.random.randint(0,1500)
             draw=np.random.randint(0,group_sizes[label])
             #print(replace,draw)
             my_sequence=mypool[draw]
+            replace=np.random.randint(0,len(my_sequence))
+            replace2=np.random.randint(0,len(my_sequence))
             #print(my_sequence)
             #print(my_sequence[replace])
             my_sequence[replace]=[0,0,0,0]
@@ -466,7 +467,7 @@ with open('predict_data.fasta', 'w') as file:
 
 # Making predictions.
 with open('predict_results.txt', 'w') as outfile:
-    outfile.write(str(labels_dict))
+    outfile.write(str(labels_dict)+'\n')
     predictions = model.predict(x_predict)
     predictions_true=np.zeros(number_of_labels)
     predictions_false=np.zeros(number_of_labels)
